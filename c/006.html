@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="006.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
-    body {
+    html, body {
       margin:0;
       background-color:#000000 ;
       
@@ -56,6 +56,7 @@ p {
 }
 h4 {
   color:#9FE2BF;
+  text-align: center;
   text-shadow: 0 0 5px #9FE2BF, 0 0 10px #9FE2BF;
 }
 footer {
@@ -65,14 +66,57 @@ footer {
   color:#FFD100;
   background-color: #FF3D00;
 }
+ .audio-player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    outline:3px solid #9FE2BF;
+    border: 2px solid #FF00BD;
+    border-radius: 10px;
+    padding: 5px;
+    width: 92%;
+  }
+
+  .play-button,
+  .pause-button {
+    background-color: #CCFF00;
+    border: none;
+    width:25px;
+    border-radius: 5px;
+    color: #1a1a1a;
+    padding: 4px;
+    cursor: pointer;
+  }
+  
+  .iframe-container {margin-top:100px;
+            position: relative;
+            width: 100%
+            aspect-ratio:16/9;
+            height: 315px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px #0ff,px 0 0 40px #ff00ff;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 315px;
+            border: none;
+            margin:10;
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+        }
   </style>
 </head>
 <body>
   <br>
   <img style="background-color: black;" src="https://istamarahome.net/wp-content/uploads/elementor/thumbs/smiley-1-q93izfepj0n44gvgxdvzaidc2hvojnpez3rtnc4fls.png" alt=""><div class="container">
-  <audio controls>
-    <source src="https://raw.githubusercontent.com/3asyice/Noticias/main/Caso/aeropass/Highly Suspect - Lydia   .mp3">
-  </audio><br>
+    <div class="audio-player">
+      <audio id="audio" src="https://raw.githubusercontent.com/3asyice/Noticias/main/Caso/aeropass/Highly Suspect - Lydia   .mp3" type="audio/mp3"></audio>
+      <button class="play-button">▶</button>
+      <button class="pause-button">◼</button>
+    </div>
+  <br>
   <br>
     <div class="post-info">
       <h4>609 CARVALHO</h4>
@@ -81,7 +125,8 @@ footer {
   <div class="post-content">
     <p>Caros aliados e adversários,
      <br><br>
-    A sombra do suicídio se intensificou após a minha lamentável dispensa em nome da disciplina do Exército Brasileiro. Empédocles, em 434 a.C., abraçou a morte como um ato de transformação, uma crença que ecoou ao longo da história. Em Roma, o suicídio nunca foi considerado uma ofensa; um soldado que se suicidasse era julgado da mesma forma que um desertor. Para os estoicos, a morte representava uma garantia de liberdade, uma fuga de uma realidade que já não oferecia propósito.
+    
+    A sombra do suicídio se intensificou após a minha lamentável dispensa, a exclusão a bem da disciplina do Exército Brasileiro. Empédocles, em 434 a.C., abraçou a morte como um ato de transformação, uma crença que ecoou ao longo da história. Em Roma, o suicídio nunca foi considerado uma ofensa; um soldado que se suicidasse era julgado da mesma forma que um desertor. Para os estoicos, a morte representava uma garantia de liberdade, uma fuga de uma realidade que já não oferecia propósito.
      <br><br>
     Vivemos em um estado de depressão e ansiedade diante de planos futuristas que nos cercam. Este não é um sentimento isolado, mas um eco coletivo que ressoa nas paredes dos quartéis, onde centenas de histórias permanecem ocultas. A manutenção da ordem e da disciplina se sobrepõe ao bem-estar dos indivíduos. O trágico caso de GUILHERME CRUZ WENNIGKAMP, que tirou a própria vida enquanto estava em serviço, deve ser lembrado.
      <br><br>
@@ -129,9 +174,23 @@ footer {
       <img src="https://raw.githubusercontent.com/3asyice/CelSoares-----/main/imagens/silvano-dormindo.jpg" alt="Silvano Dormindo">
     </div>
   </div>
+  
+  <div class="iframe-container" >
+    
+    <iframe src="https://www.youtube.com/embed/xulXmZrC9uI" allowfullscreen></iframe>
+  </div>
   <footer>
     &copy; Direitos reservados.
   </footer>
+  <script>document.querySelector('.play-button').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('audio').play();
+  });
+  
+  document.querySelector('.pause-button').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('audio').pause();
+  });</script>
   <script src='006.js'></script>
   </div>
 </body>
