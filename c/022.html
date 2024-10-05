@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="O caso do jovem que foi expulso das Forças Armadas do Exército Brasileiro continua um problema para o mundo.">
+  <meta name="author" content="anonymous">
+  <title>Onde está o amor?</title>
+  <link rel="stylesheet" href="006.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin:0;
+      background-color:#000000 ;
+      
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+    }
+    img, video {
+      height: 100%;
+      width: 100%;
+    }
+    .container {
+      padding: 20px;
+      text-align: justify;
+      background-size: cover;
+      margin: 0 auto;
+    }
+    .carousel {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      height: 300px; /* Defina a altura do carrossel */
+    }
+    .carousel-images {
+      display: flex;
+      animation: scroll 30s  linear infinite; /* Aumente a duração da animação */
+      height: 100%;
+    }
+    
+.carousel-images {
+  display: flex;
+  animation: scroll 60s linear infinite; /* Aumente a duração da animação */
+  height: 100%;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-2150%); } /* Mude para -200% para abranger todas as imagens */
+}
+p {
+  color:#FF00BD;
+  text-shadow: 0 0 5px #FF00BD, 0 0 10px #FF00BD;
+}
+h4 {
+  color:#FF309A;
+  text-align: center;
+  text-shadow: 0 0 5px #FF309A, 0 0 10px #FF309A;
+}
+footer {
+  text-align: center;
+  margin-top: 50px;
+  padding:10px;
+  color:#FFD100;
+  background-color: #FF3D00;
+}
+ .audio-player {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    outline:3px solid #9FE2BF;
+    border: 2px solid #FF00BD;
+    border-radius: 10px;
+    padding: 5px;
+    width: 92%;
+  }
+
+  .play-button,
+  .pause-button {
+    background-color: #CCFF00;
+    border: none;
+    width:25px;
+    border-radius: 5px;
+    color: #1a1a1a;
+    padding: 4px;
+    cursor: pointer;
+  }
+  
+  .iframe-container {margin-top:100px;
+            position: relative;
+            width: 100%
+            aspect-ratio:16/9;
+            height: 315px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px #0ff,px 0 0 40px #ff00ff;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 315px;
+            border: none;
+            margin:10;
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+        }
+  </style>
+</head>
+<body>
+  <br>
+  <img style="background-color: black;" src="https://raw.githubusercontent.com/Jack-sBrainCancer/NoticiasDelTomorrow/refs/heads/main/cyberverse/cyberimage0.jpg" alt=""><div class="container">
+    <div class="audio-player">
+      <audio id="audio" src="https://raw.githubusercontent.com/Jack-sBrainCancer/NoticiasDelTomorrow/main/cyberverse/Black Eyed Peas - Where Is The Love (Audio).mp3" type="audio/mp3"></audio>
+      
+      <button class="play-button">▶</button>
+      <button class="pause-button">◼</button>
+    </div>
+  <br>
+  <br>
+    <div class="post-info">
+      <h4>Esperança de Justiça</h4>
+      <p>Sábado, 28 de setembro, </p>
+    </div>
+  <div class="post-content">
+    <p>Violência Paterna,
+     <br><br>
+  
+    Odair José dos Santos e o seu filho José Gabriel dos Santos brigam por causa de uma cybermoto, após uma luta corporal, terminou com o Gabriel marcado com um ferimento profundo em sua cabeça, causado por um facão. O que o fez desmaiar e ser levado para a UPA de Ijuí. <br>
+    O Odair é um grande monstro que deve ser preso. Onde está a justiça quando precisamos dela? Ele é um monstro que não deveria estar solto e livre para machucar outras pessoas. Ele é perigoso.</p>
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzWdb61_eCpvVxnOvMR5GrWLQ3HvJr3-lERU-n4lfldq98PQqb_x3fCOUi&s=10" alt="Stop the violence!" class="post-img">
+    <p>A violência tem que acabar.<br><br /> Onde está o amor?<br>
+    Onde está o amor?<br>
+    Onde está o amor?<br>
+    Onde está o amor?<br></p>
+  </div>
+  
+  <div class="iframe-container" >
+    
+    <iframe src="https://www.youtube.com/embed/7z5IB-IQd-Q" allowfullscreen></iframe>
+  </div>
+  <footer>
+    &copy; Direitos reservados.
+  </footer>
+  <script>document.querySelector('.play-button').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('audio').play();
+  });
+  
+  document.querySelector('.pause-button').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.getElementById('audio').pause();
+  });</script>
+  <script src='006.js'></script>
+  </div>
+</body>
+</html>
