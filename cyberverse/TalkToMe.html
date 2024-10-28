@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fale Comigo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #0f0f0f;
+            color: #00ffcc;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .chat-container {
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            backdrop-filter: blur(10px);
+        }
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #00ffcc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        input[type="text"] {
+            width: calc(100% - 90px);
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #00ffcc;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #00ffcc;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #00cc99;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        button {
+            padding: 10px;
+            background-color: #00cc99;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #009966;
+        }
+        #translate-button {
+            margin-top: 10px;
+            background-color: #007bff;
+        }
+        #translate-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+        <button onclick="sendMessage()">Enviar</button>
+        <button id="translate-button" onclick="translateDefinition()">Traduzir Definição para Português</button>
+    </div>
+    <script>
+        let lastDefinition = ""; // Variável para armazenar a última definição obtida
+        let currentWord = ""; // Variável para armazenar a palavra atual a ser definida
+        let awaitingMeaning = false; // Flag para verificar se estamos aguardando o significado
+        let dictionary = {}; // Dicionário para armazenar definições em memória
+
+        // Função para carregar o dicionário do arquivo JSON e do Local Storage
+        function loadDictionary() {
+            fetch('dictionary.json')
+                .then(response => response.json())
+                .then(data => {
+                    dictionary = data; // Armazena o dicionário do JSON em memória
+                    const storedDictionary = localStorage.getItem('dictionary');
+                    if (storedDictionary) {
+                        const localStorageDict = JSON.parse(storedDictionary);
+                        // Mescla o dicionário do Local Storage com o do JSON
+                        dictionary = { ...dictionary, ...localStorageDict };
+                    }
+                })
+                .catch(error => console.error('Erro ao carregar o dicionário:', error));
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            input.value = '';
+            
+            // Se estamos aguardando um significado, não processe a mensagem como uma nova palavra
+            if (awaitingMeaning) {
+                // Adiciona o significado fornecido pelo usuário
+                addMeaningToDictionary(message);
+                return; // Não processe mais
+            }
+
+            addMessage(`🐼: ${message}`);
+            processMessage(message);
+        }
+
+        function addMessage(message) {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div>${message}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight; // Rolagem automática
+        }
+
+        function processMessage(message) {
+            const lowerMessage = message.toLowerCase().trim();
+            let word;
+
+            if (lowerMessage.startsWith('defina ')) {
+                word = lowerMessage.split(' ')[1];
+            }
+            
+            else if (lowerMessage.startsWith('o que é ')) {
+                word = lowerMessage.split(' ')[3];
+            } else if (lowerMessage.startsWith('o que significa ')) {
+                word = lowerMessage.split(' ')[3];
+            } else {
+                word = lowerMessage; // Assume que o usuário só digitou a palavra
+            }
+
+            if (word) {
+                currentWord = word; // Armazena a palavra atual
+                if (dictionary[word]) {
+                    lastDefinition = dictionary[word]; // Armazena a definição
+                    addMessage(`🐰: ${lastDefinition}`);
+                } else {
+                    addMessage(`🦊: Não sei o que "${word}" significa...!`);
+                    addMessage(`🦊: Poderia me ensinar o que responder para "${word}"?`); // Solicita o significado
+                    awaitingMeaning = true; // Indica que estamos aguardando o significado
+                }
+            } else {
+                  addMessage(`🐶: Tente usar um dos formatos sugeridos.`);
+            }
+        }
+
+        function addMeaningToDictionary(meaning) {
+            // Armazena o significado no dicionário em memória
+            dictionary[currentWord] = meaning;
+            // Atualiza o Local Storage com o novo dicionário
+            localStorage.setItem('dictionary', JSON.stringify(dictionary));
+            // Mostra a mensagem de agradecimento
+            addMessage(`🐰: Agora eu sei que "${currentWord}" significa: "${meaning}".`);
+            lastDefinition = meaning; // Atualiza a última definição
+            awaitingMeaning = false; // Reseta a flag
+        }
+
+        function translateDefinition() {
+            if (!lastDefinition) {
+                addMessage(`🦄: Nenhuma definição disponível para traduzir.`);
+                return;
+            }
+
+            fetch('https://libretranslate.com/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    q: lastDefinition,
+                    source: 'en',
+                    target: 'pt',
+                    format: 'text'
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao traduzir a definição.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const translatedDefinition = data.translatedText;
+                addMessage(`🦄: A tradução da definição é: ${translatedDefinition}`);
+            })
+            .catch(error => addMessage(`🦄: ${error.message}`));
+        }
+
+        // Carrega o dicionário ao iniciar a página
+        window.onload = loadDictionary;
+    </script>
+</body>
+</html>
