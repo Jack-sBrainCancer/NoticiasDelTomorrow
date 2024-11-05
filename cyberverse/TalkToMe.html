@@ -3,15 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <meta name="description" content="Fale Comigo! Um bate-papo que aprende a conversar com os usuários. Converse e descubra como ensiná-lo a falar com você!.">
-        <link rel="canonical" href="https://jack-sbraincancer.github.io/NoticiasDelTomorrow/cyberverse/TalkToMe">
-  <link rel="icon" type="image/png" href=
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2ovs3RKINmUKzKEYVosJNBJBvoveUg0HlTF3Jlv7wqF-WxPskYjaCe9M&s=10"
-  sizes="16×16">
-      <meta name="author" content="anonymous">
     <title>Fale Comigo</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
     <style>
@@ -54,7 +45,6 @@
             transition: 0.3s;
         }
         input[type="text"]:focus {
-          font-size: 12px;
             border-color: #00cc99;
             background-color: rgba(255, 255, 255, 0.2);
         }
@@ -84,24 +74,22 @@
         <div id="chat-box"></div>
         <input type="text" id="user-input" placeholder="Digite sua mensagem...">
         <button onclick="sendMessage()">Enviar</button>
-        <button id="translate-button" onclick="translateDefinition()">Traduzir Definição para Português</button>
+        <button id="translate-button" onclick="translateDefinition()">Traduzir Definição</button>
     </div>
     <script>
-        let lastDefinition = ""; // Variável para armazenar a última definição obtida
-        let currentWord = ""; // Variável para armazenar a palavra atual a ser definida
-        let awaitingMeaning = false; // Flag para verificar se estamos aguardando o significado
-        let dictionary = {}; // Dicionário para armazenar definições em memória
+        let lastDefinition = "";
+        let currentWord = "";
+        let awaitingMeaning = false;
+        let dictionary = {};
 
-        // Função para carregar o dicionário do arquivo JSON e do Local Storage
         function loadDictionary() {
             fetch('dictionary.json')
                 .then(response => response.json())
                 .then(data => {
-                    dictionary = data; // Armazena o dicionário do JSON em memória
+                    dictionary = data;
                     const storedDictionary = localStorage.getItem('dictionary');
                     if (storedDictionary) {
                         const localStorageDict = JSON.parse(storedDictionary);
-                        // Mescla o dicionário do Local Storage com o do JSON
                         dictionary = { ...dictionary, ...localStorageDict };
                     }
                 })
@@ -113,11 +101,9 @@
             const message = input.value.trim();
             input.value = '';
             
-            // Se estamos aguardando um significado, não processe a mensagem como uma nova palavra
             if (awaitingMeaning) {
-                // Adiciona o significado fornecido pelo usuário
                 addMeaningToDictionary(message);
-                return; // Não processe mais
+                return;
             }
 
             addMessage(`🐼: ${message}`);
@@ -127,49 +113,76 @@
         function addMessage(message) {
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML += `<div>${message}</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight; // Rolagem automática
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function processMessage(message) {
-            const lowerMessage = message.toLowerCase().trim();
+            let lowerMessage = message.toLowerCase().trim();
             let word;
 
+            // Remove o "?" do final da mensagem, se existir
+            if (lowerMessage.endsWith('?')) {
+                lowerMessage = lowerMessage.slice(0, -1).trim(); // Remove o "?" e espaços em branco
+            }
+            // Verifica se a mensagem começa com "o que é" ou "defina"
             if (lowerMessage.startsWith('defina ')) {
                 word = lowerMessage.split(' ')[1];
-            }
-            
-            else if (lowerMessage.startsWith('o que é ')) {
-                word = lowerMessage.split(' ')[3];
+            } else if (lowerMessage.startsWith('o que é ')) {
+                const parts = lowerMessage.split(' ');
+                // "o que é um" ou "o que é uma"
+                if (parts.length > 4 && (parts[3] === 'um' || parts[3] === 'uma')) {
+                    word = parts[4]; // A palavra que vem depois de "um" ou "uma"
+                } else {
+                    word = parts[3]; // A palavra que vem após "o que é"
+                }
             } else if (lowerMessage.startsWith('o que significa ')) {
                 word = lowerMessage.split(' ')[3];
             } else {
-                word = lowerMessage; // Assume que o usuário só digitou a palavra
+                word = lowerMessage; // Se não for um dos formatos, assume que é a palavra direta
             }
 
             if (word) {
-                currentWord = word; // Armazena a palavra atual
+                currentWord = word;
                 if (dictionary[word]) {
-                    lastDefinition = dictionary[word]; // Armazena a definição
+                    lastDefinition = dictionary[word];
                     addMessage(`🐰: ${lastDefinition}`);
                 } else {
-                    addMessage(`🦊: Não sei o que "${word}" significa...!`);
-                    addMessage(`🦊: Poderia me ensinar o que responder para "${word}"?`); // Solicita o significado
-                    awaitingMeaning = true; // Indica que estamos aguardando o significado
+                    // Busca a definição da palavra na API
+                    fetch(`https://dicionario-aberto.net/search/${word}`) // Substitua pela URL real da API
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro ao buscar definição.');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data && data.definicao) {
+                                lastDefinition = data.definicao; // Acesse a definição aqui
+                                dictionary[word] = lastDefinition; 
+                                localStorage.setItem('dictionary', JSON.stringify(dictionary)); // Salva no localStorage
+                                addMessage(`🐰: ${lastDefinition}`);
+                            } else {
+                                addMessage(`🦊: Não sei o que "${word}" significa...!`);
+                                addMessage(`🦊: Poderia me ensinar o que responder para "${word}"?`);
+                                awaitingMeaning = true;
+                            }
+                        })
+                        .catch(error => {
+                            addMessage(`🦊: ${error.message}`);
+                            awaitingMeaning = true;
+                        });
                 }
             } else {
-                  addMessage(`🐶: Tente usar um dos formatos sugeridos.`);
+                addMessage(`🐶: Tente usar um dos formatos sugeridos.`);
             }
         }
 
         function addMeaningToDictionary(meaning) {
-            // Armazena o significado no dicionário em memória
             dictionary[currentWord] = meaning;
-            // Atualiza o Local Storage com o novo dicionário
             localStorage.setItem('dictionary', JSON.stringify(dictionary));
-            // Mostra a mensagem de agradecimento
             addMessage(`🐰: Agora eu sei que "${currentWord}" significa: "${meaning}".`);
-            lastDefinition = meaning; // Atualiza a última definição
-            awaitingMeaning = false; // Reseta a flag
+            lastDefinition = meaning;
+            awaitingMeaning = false;
         }
 
         function translateDefinition() {
@@ -185,8 +198,8 @@
                 },
                 body: JSON.stringify({
                     q: lastDefinition,
-                    source: 'en',
-                    target: 'pt',
+                    source: 'pt',
+                    target: 'en',
                     format: 'text'
                 })
             })
@@ -203,7 +216,6 @@
             .catch(error => addMessage(`🦄: ${error.message}`));
         }
 
-        // Carrega o dicionário ao iniciar a página
         window.onload = loadDictionary;
     </script>
 </body>
